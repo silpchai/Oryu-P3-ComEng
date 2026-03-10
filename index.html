@@ -1,186 +1,234 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 3 Basic English Quiz</title>
+    <title>English P.3 Interactive Quiz</title>
     <style>
         :root {
-            --primary-purple: #6c5ce7;
-            --accent-pink: #ef87be;
-            --success-green: #00b894;
-            --error-red: #d63031;
-            --bg-color: #f9f9f9;
+            --primary: #4a90e2;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --bg: #f0f4f8;
+            --text: #2c3e50;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Kanit', 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             padding: 20px;
             display: flex;
             justify-content: center;
         }
 
-        .quiz-container {
-            max-width: 800px;
+        .container {
             width: 100%;
+            max-width: 700px;
             background: white;
             padding: 30px;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        header {
-            text-align: center;
-            border-bottom: 3px dashed var(--primary-purple);
-            margin-bottom: 30px;
-            padding-bottom: 10px;
+        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; }
+
+        .section-title {
+            background: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 25px 0 15px 0;
+            font-size: 1.1rem;
         }
 
-        .question-box {
-            margin-bottom: 35px;
-            padding: 20px;
-            border-radius: 15px;
-            background: #fff;
-            border: 1px solid #eee;
+        .story-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 5px solid #f1c40f;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
         }
 
         .question-text {
-            font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 15px;
-            color: #2d3436;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
         }
 
         .options-container {
             display: grid;
-            grid-template-columns: 1fr;
             gap: 10px;
         }
 
-        .option-btn {
-            padding: 12px 20px;
-            border: 2px solid #dfe6e9;
+        .option {
+            padding: 12px 15px;
+            border: 2px solid #edeff2;
             border-radius: 10px;
-            background: white;
             cursor: pointer;
-            text-align: left;
-            font-size: 1rem;
-            transition: 0.2s;
+            transition: all 0.2s;
+            background: #f9f9f9;
         }
 
-        .option-btn:hover:not(:disabled) {
-            background-color: #f1f2f6;
-            border-color: var(--primary-purple);
+        .option:hover {
+            border-color: var(--primary);
+            background: #f0f7ff;
         }
 
-        .correct {
-            background-color: var(--success-green) !important;
-            color: white;
-            border-color: var(--success-green) !important;
+        /* สถานะเมื่อตอบ */
+        .option.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724;
+            font-weight: bold;
         }
 
-        .wrong {
-            background-color: var(--error-red) !important;
-            color: white;
-            border-color: var(--error-red) !important;
+        .option.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--error) !important;
+            color: #721c24;
+            text-decoration: line-through;
+        }
+
+        .disabled {
+            pointer-events: none;
         }
 
         .feedback {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 10px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
             display: none;
-            font-size: 0.95rem;
-            line-height: 1.5;
         }
 
-        .feedback-correct { background: #e8f8f5; color: #006b54; border: 1px solid var(--success-green); }
-        .feedback-wrong { background: #fdf2f2; color: #8a1d1d; border: 1px solid var(--error-red); }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #b2bec3;
-        }
+        footer { text-align: center; margin-top: 30px; font-size: 0.8rem; color: #bdc3c7; }
     </style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <header>
-        <h1>🌟 Grade 3 English Quiz 🌟</h1>
-        <p>Future (Going to), Past Simple, and Email Writing</p>
-    </header>
+<div class="container">
+    <h1>📝 English P.3 Quiz</h1>
+    <p class="subtitle">คลิกเลือกคำตอบที่ถูกต้องที่สุด</p>
 
-    <div id="quiz-wrapper"></div>
+    <div id="quiz-content"></div>
 
-    <footer>Fun Learning with Gemini • 2026</footer>
+    <footer>© 2026 Interactive Learning Materials for Grade 3</footer>
 </div>
 
 <script>
-    const quizData = [
-        { q: "Which sentence uses 'be going to' correctly?", a: ["I going to play football tomorrow.", "He is going to visit his grandmother next week.", "They is going to eat pizza tonight.", "She are going to dance."], c: 1, r: "Correct structure: Subject + is/am/are + going to + verb." },
-        { q: "What is the Past Simple form of the verb 'play'?", a: ["playing", "played", "plays", "play"], c: 1, r: "For regular verbs like 'play', we add '-ed' to show the past." },
-        { q: "In an email, where do you write the name of the person receiving the message?", a: ["Subject line", "To:", "From:", "Closing"], c: 1, r: "The 'To' field is for the recipient's information." },
-        { q: "Choose the correct sentence: 'Yesterday, I _______ a big cake.'", a: ["eat", "eaten", "ate", "eating"], c: 2, r: "'Ate' is the irregular past tense form of 'eat'." },
-        { q: "Which of these is a good 'Subject' for a birthday party email?", a: ["Hello", "Party Invitation", "Goodbye", "My name is Tim"], c: 1, r: "A subject line should quickly summarize what the email is about." },
-        { q: "Complete: 'We _______ watch a movie tonight.'", a: ["is going to", "are going to", "am going to", "going to"], c: 1, r: "We use 'are' with 'We', 'You', and 'They'." },
-        { q: "What is the negative form of 'She played tennis'?", a: ["She not played tennis.", "She didn't play tennis.", "She didn't played tennis.", "She doesn't play tennis."], c: 1, r: "Use 'didn't' + base verb (no -ed) for negatives in the past." },
-        { q: "How do you usually start a friendly email?", a: ["Dear Sam,", "Bye Sam,", "Sincerely,", "To: Sam"], c: 0, r: "'Dear' or 'Hi' are common friendly greetings." },
-        { q: "Complete: 'It _______ rain soon.'", a: ["is going to", "are going to", "am going to", "goes to"], c: 0, r: "'It' is singular, so we use 'is'." },
-        { q: "Which verb is irregular in the Past Simple?", a: ["Walk", "Go", "Jump", "Cook"], c: 1, r: "The past of 'go' is 'went' (not 'goed')." },
-        { q: "Correct way to end an email to a friend:", a: ["Best wishes, Tom", "Dear Tom,", "Subject: Hello", "To: Tom"], c: 0, r: "Ending with a warm closing like 'Best wishes' is correct." },
-        { q: "Complete: '_______ you going to visit the park?'", a: ["Is", "Am", "Are", "Do"], c: 2, r: "Questions with 'you' use 'Are'." },
-        { q: "What did they do? 'Last Saturday, they _______ to the zoo.'", a: ["go", "went", "goed", "going"], c: 1, r: "'Went' is the past form of 'go'." },
-        { q: "In an email address, what does the '@' symbol do?", a: ["Separates name and domain", "Separates subject and message", "Separates greeting and name", "Separates date and time"], c: 0, r: "The '@' connects the user name to the email provider (like @gmail.com)." },
-        { q: "Complete: 'I _______ buy a new toy tomorrow.'", a: ["is going to", "am going to", "are going to", "going to"], c: 1, r: "The subject 'I' always pairs with 'am'." },
-        { q: "Which sentence is in the Past Simple?", a: ["He is running fast.", "He ran fast.", "He will run fast.", "He runs fast."], c: 1, r: "'Ran' describes an action that finished in the past." },
-        { q: "Where would you find 'Hi Jane' in an email?", a: ["At the end", "In subject line", "At the beginning", "After signature"], c: 2, r: "Greetings always start the message body." },
-        { q: "Make a question: '_______ he going to help us?'", a: ["Are", "Is", "Am", "Does"], c: 1, r: "Use 'Is' for singular subjects like 'he'." },
-        { q: "What is the past tense of 'see'?", a: ["seed", "saw", "seen", "sees"], c: 1, r: "'See' changes to 'saw' in the Past Simple." },
-        { q: "Which part of an email explains WHY you are writing?", a: ["The Greeting", "The Body", "The Closing", "The Attachment"], c: 1, r: "The 'Body' is the main section containing all the details." }
+    const questions = [
+        { q: "1. An elephant is very ________. It is not small.", options: ["a. funny", "b. heavy", "c. large"], ans: 2 },
+        { q: "2. I cannot lift this box because it is too ________.", options: ["a. pretty", "b. heavy", "c. begin"], ans: 1 },
+        { q: "3. The clown is very ________. He makes all the children laugh.", options: ["a. funny", "b. large", "c. beautiful"], ans: 0 },
+        { q: "4. Which word is a synonym of 'start'?", options: ["a. finish", "b. begin", "c. end"], ans: 1 },
+        { q: "5. 'That flower is very pretty.' What is another word for pretty?", options: ["a. beautiful", "b. funny", "c. heavy"], ans: 0 },
+        
+        { header: "Part 2: Sickness & Advice" },
+        { q: "6. I have a ________. My head hurts.", options: ["a. runny nose", "b. headache", "c. stomachache"], ans: 1 },
+        { q: "7. A: 'I have a runny nose.' B: 'You ________ see a doctor.'", options: ["a. should", "b. are", "c. going to"], ans: 0 },
+        { q: "8. What should you do if you have a headache?", options: ["a. You should run.", "b. You should take some medicine and rest.", "c. You should eat ice cream."], ans: 1 },
+        { q: "9. My nose is wet and I am sneezing. I have a ________.", options: ["a. headache", "b. runny nose", "c. broken leg"], ans: 1 },
+
+        { header: "Part 3: Conjunctions" },
+        { q: "10. I like apples ________ I like bananas.", options: ["a. and", "b. but", "c. because"], ans: 0 },
+        { q: "11. It is raining, ________ I will stay at home.", options: ["a. and", "b. so", "c. because"], ans: 1 },
+        { q: "12. I am happy ________ today is my birthday.", options: ["a. but", "b. so", "c. because"], ans: 2 },
+        { q: "13. I want to go outside, ________ it is too hot.", options: ["a. but", "b. and", "c. so"], ans: 0 },
+
+        { header: "Part 4: Speaking & Description" },
+        { q: "14. A tiger and a lion ________ sharp teeth.", options: ["a. both are", "b. both have", "c. both do"], ans: 1 },
+        { q: "15. An apple is red, ________ a banana is yellow.", options: ["a. and", "b. but", "c. because"], ans: 1 },
+        { q: "16. 'The cat is small, white, and fluffy.' This sentence is a ________.", options: ["a. description", "b. advice", "c. synonym"], ans: 0 },
+        { q: "17. Do they play football?", options: ["a. Yes, they do.", "b. Yes, they did.", "c. No, they didn't."], ans: 0 },
+        { q: "18. Did they watch a movie yesterday?", options: ["a. No, they don't.", "b. No, they didn't.", "c. Yes, they do."], ans: 1 },
+
+        { header: "Part 5: Grammar - Tenses" },
+        { q: "19. Tomorrow, I ________ play games.", options: ["a. am go to", "b. am going to", "c. going to"], ans: 1 },
+        { q: "20. She ________ visit her grandmother next week.", options: ["a. is going to", "b. are going to", "c. am going to"], ans: 0 },
+        { q: "21. Yesterday, Tom ________ to the park.", options: ["a. go", "b. went", "c. going"], ans: 1 },
+        { q: "22. Last night, they ________ dinner at 7 o'clock.", options: ["a. cooked", "b. cook", "c. cooks"], ans: 0 },
+        { q: "23. We have English class ________ Monday.", options: ["a. in", "b. at", "c. on"], ans: 2 },
+        { q: "24. I will see you ________ Friday!", options: ["a. on", "b. in", "c. at"], ans: 0 },
+
+        { header: "Part 6: Reading & Sequence" },
+        { story: "Last Sunday, Ben went to the beach. First, he built a sandcastle. Then, he swam in the sea. Finally, he ate ice cream and went home." },
+        { q: "25. Where is the setting of this story?", options: ["a. At school", "b. At the beach", "c. At the hospital"], ans: 1 },
+        { q: "26. What is the Sequence of Events? What did Ben do first?", options: ["a. Built a sandcastle", "b. Swam in the sea", "c. Ate ice cream"], ans: 0 },
+        { q: "27. What did Ben do finally?", options: ["a. Swam in the sea", "b. Built a sandcastle", "c. Ate ice cream and went home"], ans: 2 },
+        { q: "28. The part where Ben builds a sandcastle is the ________ of the story.", options: ["a. Beginning", "b. Middle", "c. End"], ans: 0 },
+        { q: "29. 'He swam in the sea' is the ________ of the story.", options: ["a. Beginning", "b. Middle", "c. End"], ans: 1 },
+        { q: "30. Find the Past Tense verb in the story:", options: ["a. build", "b. swim", "c. went"], ans: 2 }
     ];
 
-    const wrapper = document.getElementById('quiz-wrapper');
+    const quizContent = document.getElementById('quiz-content');
 
-    quizData.forEach((item, index) => {
-        const box = document.createElement('div');
-        box.className = 'question-box';
-        
-        let options = '';
-        item.a.forEach((opt, optIdx) => {
-            options += `<button class="option-btn" onclick="checkAnswer(${index}, ${optIdx}, this)">${opt}</button>`;
-        });
+    questions.forEach((item, index) => {
+        if (item.header) {
+            const h = document.createElement('div');
+            h.className = 'section-title';
+            h.innerText = item.header;
+            quizContent.appendChild(h);
+        } else if (item.story) {
+            const s = document.createElement('div');
+            s.className = 'story-box';
+            s.innerText = item.story;
+            quizContent.appendChild(s);
+        } else {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-block';
+            
+            const qText = document.createElement('div');
+            qText.className = 'question-text';
+            qText.innerText = item.q;
+            qDiv.appendChild(qText);
 
-        box.innerHTML = `
-            <div class="question-text">${index + 1}. ${item.q}</div>
-            <div class="options-container">${options}</div>
-            <div id="feedback-${index}" class="feedback"></div>
-        `;
-        wrapper.appendChild(box);
+            const optContainer = document.createElement('div');
+            optContainer.className = 'options-container';
+
+            item.options.forEach((opt, optIdx) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'option';
+                optDiv.innerText = opt;
+                optDiv.onclick = () => checkAnswer(optDiv, optIdx, item.ans, optContainer);
+                optContainer.appendChild(optDiv);
+            });
+
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            qDiv.appendChild(optContainer);
+            qDiv.appendChild(feedback);
+            quizContent.appendChild(qDiv);
+        }
     });
 
-    function checkAnswer(qIdx, choiceIdx, btn) {
-        const feedback = document.getElementById(`feedback-${qIdx}`);
-        const buttons = btn.parentElement.querySelectorAll('.option-btn');
-        const correctIdx = quizData[qIdx].c;
+    function checkAnswer(selectedOpt, selectedIdx, correctIdx, container) {
+        const options = container.querySelectorAll('.option');
+        const feedback = container.nextElementSibling;
+        
+        options.forEach((opt, idx) => {
+            opt.classList.add('disabled');
+            if (idx === correctIdx) {
+                opt.classList.add('correct');
+            }
+        });
 
-        if (feedback.style.display === 'block') return;
-
-        buttons.forEach(b => b.disabled = true);
-
-        if (choiceIdx === correctIdx) {
-            btn.classList.add('correct');
-            feedback.innerHTML = `⭐ <b>Correct!</b> ${quizData[qIdx].r}`;
-            feedback.className = 'feedback feedback-correct';
+        if (selectedIdx !== correctIdx) {
+            selectedOpt.classList.add('wrong');
+            feedback.innerText = "❌ ผิดนะจ๊ะ! คำตอบที่ถูกคือ " + (correctIdx === 0 ? 'a' : correctIdx === 1 ? 'b' : 'c');
+            feedback.style.color = "#e74c3c";
         } else {
-            btn.classList.add('wrong');
-            buttons[correctIdx].classList.add('correct');
-            feedback.innerHTML = `😅 <b>Oops!</b> ${quizData[qIdx].r}`;
-            feedback.className = 'feedback feedback-wrong';
+            feedback.innerText = "✅ เก่งมาก! ถูกต้องครับ";
+            feedback.style.color = "#2ecc71";
         }
-        feedback.style.display = 'block';
+        feedback.style.display = "block";
     }
 </script>
 
