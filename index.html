@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 3 Basic English Quiz</title>
+    <style>
+        :root {
+            --primary-purple: #6c5ce7;
+            --accent-pink: #ef87be;
+            --success-green: #00b894;
+            --error-red: #d63031;
+            --bg-color: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px dashed var(--primary-purple);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+
+        .question-box {
+            margin-bottom: 35px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #fff;
+            border: 1px solid #eee;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3436;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px 20px;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #f1f2f6;
+            border-color: var(--primary-purple);
+        }
+
+        .correct {
+            background-color: var(--success-green) !important;
+            color: white;
+            border-color: var(--success-green) !important;
+        }
+
+        .wrong {
+            background-color: var(--error-red) !important;
+            color: white;
+            border-color: var(--error-red) !important;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .feedback-correct { background: #e8f8f5; color: #006b54; border: 1px solid var(--success-green); }
+        .feedback-wrong { background: #fdf2f2; color: #8a1d1d; border: 1px solid var(--error-red); }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #b2bec3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <header>
+        <h1>🌟 Grade 3 English Quiz 🌟</h1>
+        <p>Future (Going to), Past Simple, and Email Writing</p>
+    </header>
+
+    <div id="quiz-wrapper"></div>
+
+    <footer>Fun Learning with Gemini • 2026</footer>
+</div>
+
+<script>
+    const quizData = [
+        { q: "Which sentence uses 'be going to' correctly?", a: ["I going to play football tomorrow.", "He is going to visit his grandmother next week.", "They is going to eat pizza tonight.", "She are going to dance."], c: 1, r: "Correct structure: Subject + is/am/are + going to + verb." },
+        { q: "What is the Past Simple form of the verb 'play'?", a: ["playing", "played", "plays", "play"], c: 1, r: "For regular verbs like 'play', we add '-ed' to show the past." },
+        { q: "In an email, where do you write the name of the person receiving the message?", a: ["Subject line", "To:", "From:", "Closing"], c: 1, r: "The 'To' field is for the recipient's information." },
+        { q: "Choose the correct sentence: 'Yesterday, I _______ a big cake.'", a: ["eat", "eaten", "ate", "eating"], c: 2, r: "'Ate' is the irregular past tense form of 'eat'." },
+        { q: "Which of these is a good 'Subject' for a birthday party email?", a: ["Hello", "Party Invitation", "Goodbye", "My name is Tim"], c: 1, r: "A subject line should quickly summarize what the email is about." },
+        { q: "Complete: 'We _______ watch a movie tonight.'", a: ["is going to", "are going to", "am going to", "going to"], c: 1, r: "We use 'are' with 'We', 'You', and 'They'." },
+        { q: "What is the negative form of 'She played tennis'?", a: ["She not played tennis.", "She didn't play tennis.", "She didn't played tennis.", "She doesn't play tennis."], c: 1, r: "Use 'didn't' + base verb (no -ed) for negatives in the past." },
+        { q: "How do you usually start a friendly email?", a: ["Dear Sam,", "Bye Sam,", "Sincerely,", "To: Sam"], c: 0, r: "'Dear' or 'Hi' are common friendly greetings." },
+        { q: "Complete: 'It _______ rain soon.'", a: ["is going to", "are going to", "am going to", "goes to"], c: 0, r: "'It' is singular, so we use 'is'." },
+        { q: "Which verb is irregular in the Past Simple?", a: ["Walk", "Go", "Jump", "Cook"], c: 1, r: "The past of 'go' is 'went' (not 'goed')." },
+        { q: "Correct way to end an email to a friend:", a: ["Best wishes, Tom", "Dear Tom,", "Subject: Hello", "To: Tom"], c: 0, r: "Ending with a warm closing like 'Best wishes' is correct." },
+        { q: "Complete: '_______ you going to visit the park?'", a: ["Is", "Am", "Are", "Do"], c: 2, r: "Questions with 'you' use 'Are'." },
+        { q: "What did they do? 'Last Saturday, they _______ to the zoo.'", a: ["go", "went", "goed", "going"], c: 1, r: "'Went' is the past form of 'go'." },
+        { q: "In an email address, what does the '@' symbol do?", a: ["Separates name and domain", "Separates subject and message", "Separates greeting and name", "Separates date and time"], c: 0, r: "The '@' connects the user name to the email provider (like @gmail.com)." },
+        { q: "Complete: 'I _______ buy a new toy tomorrow.'", a: ["is going to", "am going to", "are going to", "going to"], c: 1, r: "The subject 'I' always pairs with 'am'." },
+        { q: "Which sentence is in the Past Simple?", a: ["He is running fast.", "He ran fast.", "He will run fast.", "He runs fast."], c: 1, r: "'Ran' describes an action that finished in the past." },
+        { q: "Where would you find 'Hi Jane' in an email?", a: ["At the end", "In subject line", "At the beginning", "After signature"], c: 2, r: "Greetings always start the message body." },
+        { q: "Make a question: '_______ he going to help us?'", a: ["Are", "Is", "Am", "Does"], c: 1, r: "Use 'Is' for singular subjects like 'he'." },
+        { q: "What is the past tense of 'see'?", a: ["seed", "saw", "seen", "sees"], c: 1, r: "'See' changes to 'saw' in the Past Simple." },
+        { q: "Which part of an email explains WHY you are writing?", a: ["The Greeting", "The Body", "The Closing", "The Attachment"], c: 1, r: "The 'Body' is the main section containing all the details." }
+    ];
+
+    const wrapper = document.getElementById('quiz-wrapper');
+
+    quizData.forEach((item, index) => {
+        const box = document.createElement('div');
+        box.className = 'question-box';
+        
+        let options = '';
+        item.a.forEach((opt, optIdx) => {
+            options += `<button class="option-btn" onclick="checkAnswer(${index}, ${optIdx}, this)">${opt}</button>`;
+        });
+
+        box.innerHTML = `
+            <div class="question-text">${index + 1}. ${item.q}</div>
+            <div class="options-container">${options}</div>
+            <div id="feedback-${index}" class="feedback"></div>
+        `;
+        wrapper.appendChild(box);
+    });
+
+    function checkAnswer(qIdx, choiceIdx, btn) {
+        const feedback = document.getElementById(`feedback-${qIdx}`);
+        const buttons = btn.parentElement.querySelectorAll('.option-btn');
+        const correctIdx = quizData[qIdx].c;
+
+        if (feedback.style.display === 'block') return;
+
+        buttons.forEach(b => b.disabled = true);
+
+        if (choiceIdx === correctIdx) {
+            btn.classList.add('correct');
+            feedback.innerHTML = `⭐ <b>Correct!</b> ${quizData[qIdx].r}`;
+            feedback.className = 'feedback feedback-correct';
+        } else {
+            btn.classList.add('wrong');
+            buttons[correctIdx].classList.add('correct');
+            feedback.innerHTML = `😅 <b>Oops!</b> ${quizData[qIdx].r}`;
+            feedback.className = 'feedback feedback-wrong';
+        }
+        feedback.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
